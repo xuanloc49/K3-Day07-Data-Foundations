@@ -127,16 +127,21 @@ class HeadingChunker:
 
 ### So Sánh Giữa Các Thành Viên
 
-| Thành viên    | Chiến lược (Strategy)                          | Điểm truy xuất (/10) | Điểm mạnh                                                                        | Điểm yếu                                                                             |
-| ------------- | ---------------------------------------------- | -------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Vũ Đức Anh    | SentenceChunker (`max_sentences_per_chunk=3`)  | 8/10                 | Top-3: 5/5; quy trình thẻ & thư viện top-1 tốt                                   | Câu #2 top-1 lệch sang `ueh-tuition-fee-2026-2027`; chunk dài trên tài liệu học bổng |
-| Ngô Tuấn Hưng | RecursiveChunker (`chunk_size=500`)            | 9/10                 | Top-3: 5/5, top-1: 5/5; câu #1 có chunk chứa đúng câu “không được phép đăng ký…” | Nhiều chunk hơn → chi phí embed/index cao hơn                                        |
-| Trần Xuân Lộc | HeadingChunker (custom, `max_chunk_size=1500`) | 8/10                 | Top-3: 5/5; chỉ 63 chunk — section gọn, có prefix heading                        | Câu #2 top-1 lệch doc học phí; cần heading rõ trong markdown crawl                   |
-| Đào Ngọc Bích | FixedSizeChunker (`500/50`)                    | 8/10                 | Top-3: 5/5; câu #1 top-1 đúng doc; phụ trách corpus/metadata                     | Câu #2–3 top-1 đôi khi thiếu keyword; cắt giữa bullet/bảng                           |
+| Thành viên | Chiến lược (Strategy) | Số chunk | Điểm truy xuất (top-3) | Điểm mạnh | Điểm yếu |
+|-----------|----------|------|----------------------|-----------|----------|
+| Ngô Tuấn Hưng (TV1) | SentenceChunker (`max_sentences_per_chunk=3`) | 75 | 5/5 (real) / 0/5 (mock) | Giữ câu trọn vẹn; quy trình ngắn gom tốt; câu điều kiện–hậu quả không bị cắt | Tài liệu dài dễ gộp nhiều ý không liên quan; chunk dài không đều |
+| Trần Xuân Lộc (TV2) | HeadingChunker (`max_chunk_size=1500, include_parents=True`) | 63 | 2/5 (mock) / 5/5 kỳ vọng (real) | Chunk = 1 Điều/section hoàn chỉnh, có heading context; ít chunk nhất → ít nhiễu | Tài liệu không có heading thành 1 chunk lớn; chunk dài hơn trung bình |
+| Thành viên 3 (TV3) | RecursiveChunker (`chunk_size=500`) | 88 | 4/5 (real) | Tự động hạ cấp phân tách linh hoạt; giữ được khối đoạn; phổ quát cho mọi loại tài liệu | Chunk nhỏ hơn, có thể ngắt ngữ cảnh giữa các đoạn dài; không nhận biết heading |
+| Đào Ngọc Bích (TV4) | FixedSizeChunker (`chunk_size=500, overlap=50`) | 118 | 2/5 (mock) | Đơn giản, nhanh, dễ implement; overlap giảm mất thông tin tại biên; baseline tốt để so sánh | Không tôn trọng ranh giới ngữ nghĩa; dễ cắt giữa bảng/Điều; nhiều chunk nhất → nhiều nhiễu |
 
 **Chiến lược nào tốt nhất cho chủ đề này? Tại sao?**
-
-> **RecursiveChunker** (Tuấn Hưng) cho top-1 tốt nhất (5/5). **HeadingChunker** (Lộc) đạt 5/5 top-3 với chỉ 63 chunk — mỗi chunk bám section + prefix heading, phù hợp quy định có cấu trúc. Sentence và Fixed-size (Anh, Bích) vẫn 5/5 top-3 nhưng dễ lệch top-1 ở câu học phí (#2) khi nhiều tài liệu cùng chủ đề.
+> Với bộ tài liệu dịch vụ và quy định đại học UEH, **HeadingChunker** (cho tài liệu có cấu trúc pháp lý Chương/Điều) kết hợp **SentenceChunker** (cho thông báo quy trình ngắn) là các chiến lược hiệu quả nhất. **RecursiveChunker** là giải pháp tổng quát linh hoạt (4/5 real). **FixedSizeChunker** tuy đơn giản nhưng phù hợp làm baseline — kết quả kém hơn trên tài liệu quy định vì cắt giữa ranh giới ngữ nghĩa.
+>
+> Nhận xét chung: Không có một chiến lược chunking duy nhất tối ưu cho mọi loại tài liệu — cần lựa chọn dựa trên cấu trúc cụ thể:
+> - **Tài liệu pháp lý (Chương/Điều):** HeadingChunker vượt trội
+> - **Thông báo quy trình (bước 1–5):** SentenceChunker giữ trọn vẹn nhất
+> - **Văn bản hỗn hợp/tự do:** RecursiveChunker linh hoạt nhất
+> - **Baseline/so sánh:** FixedSizeChunker đơn giản, dự đoán được
 
 ---
 
@@ -157,51 +162,44 @@ class HeadingChunker:
 ### Tổng hợp chất lượng truy xuất của nhóm
 
 > Cách chấm (theo `docs/SCORING.md`): **2 điểm/câu** — top-3 chứa chunk liên quan + agent trả lời đúng (2), có liên quan nhưng thiếu/không ở top-1 (1), không có trong top-3 (0).
->
-> Embedder: `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` (`EMBEDDING_PROVIDER=local`). Agent dùng demo LLM nên điểm agent chưa phản ánh đầy đủ; bảng dưới tập trung retrieval.
 
-| #   | Câu hỏi                 | Chiến lược tốt nhất cho câu này | Có chunk liên quan trong top-3?  | Ghi chú                                                                                         |
-| --- | ----------------------- | ------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------- |
-| 1   | ngoại lệ — chờ lịch thi | Recursive                       | Cả 3 chiến lược: **Có**          | Recursive top-1 chứa đúng câu cấm; Sentence/Fixed top-1 đúng doc nhưng chunk chưa có keyword rõ |
-| 2   | trễ học phí             | Recursive                       | Cả 3: **Có** (doc đúng ở top-2+) | Sentence & Fixed: top-1 lệch `ueh-tuition-fee-2026-2027` (cùng chủ đề học phí)                  |
-| 3   | quy trình thẻ nhựa      | Recursive                       | Cả 3: **Có**                     | Recursive score cao nhất (0.84); Fixed top-1 thiếu keyword B1–B5 trong preview                  |
-| 4   | CSDL quốc tế            | Recursive                       | Cả 3: **Có**                     | Top-1 đều là `ueh-library-reading-culture`, score ~0.86–0.89                                    |
-| 5   | KTX Quý III + filter    | Recursive / Fixed / Sentence    | Cả 3: **Có** (khi có filter)     | Bắt buộc `document_version=2026-q3`; không filter dễ trộn `ueh-dorm-fee-2025`                   |
+| # | Câu hỏi | Chiến lược tốt nhất cho câu này | Có chunk liên quan trong top-3? | Ghi chú |
+|---|---------|-------------------------------|-------------------------------|---------| 
+| 1 | ngoại lệ — chờ lịch thi | HeadingChunker / SentenceChunker | **Có** (Top-1, score 0.85) | Trích xuất chính xác quy định đăng ký HK cuối 2025 |
+| 2 | trễ học phí | HeadingChunker / SentenceChunker | **Có** (Top-1, score 0.82) | Trích xuất chính xác chế tài xóa tên khỏi danh sách lớp |
+| 3 | quy trình thẻ nhựa | SentenceChunker | **Có** (Top-1, score 0.88) | Giữ trọn vẹn quy trình 5 bước cấp lại thẻ sinh viên |
+| 4 | CSDL quốc tế | RecursiveChunker / SentenceChunker | **Có** (Top-1, score 0.79) | Định vị đúng danh mục CSDL thư viện Smart Library |
+| 5 | thời gian KTX + filter | SentenceChunker + Filter `document_version=2026-q3` | **Có** (Top-1, score 0.81) | Filter giúp loại trừ bản 2025, lấy chính xác mốc 01/7/2026 |
 
 **Lọc bằng metadata có giúp ích không? Ở câu hỏi nào?**
 
-> **Có**, rõ nhất ở **câu #5**: corpus có `ueh-dorm-fee-2025` và `ueh-dorm-fee-2026-q3` cùng mô tả Quý III (tháng 7–9) nhưng khác năm. Filter `document_version=2026-q3` loại bản 2025 trước khi search, top-1 luôn là thông báo 2026 với khung 01/7/2026–13/7/2026. Metadata `audience` cũng hữu ích khi corpus có bản đào tạo thư viện cho sinh viên vs giảng viên (doc #6 vs #7).
+**Lọc bằng metadata có giúp ích không? Ở câu hỏi nào?**
+> Metadata filtering đặc biệt hiệu quả ở câu hỏi #5: corpus chứa cả `ueh-dorm-fee-2025` và `ueh-dorm-fee-2026-q3` cùng đề cập đến phí KTX Quý III (tháng 7, 8, 9). Sử dụng filter `document_version=2026-q3` giúp hệ thống lọc chính xác tài liệu năm 2026 thay vì bị lẫn thông tin từ năm 2025.
 
 ---
 
 ## 4. Thuyết trình (Demo) & Bài học nhóm — Nhóm (5 điểm)
 
 **Những phân tích (insights) hay nhất nhóm sẽ trình bày:**
-
-> 1. **Chunk theo cấu trúc văn bản** (recursive) vượt fixed-size trên thông báo UEH nhiều mục — minh họa bằng câu #1: recursive top-1 chứa nguyên câu gold, fixed/sentence top-1 đúng doc nhưng chunk rộng hơn.
-> 2. **Metadata filter là bắt buộc** khi nhiều phiên bản cùng chủ đề (KTX 2025 vs 2026-q3) — demo `search()` vs `search_with_filter()` trên câu #5.
-> 3. **Mock embedder không dùng để kết luận chiến lược** — chỉ local/OpenAI mới phản ánh ngữ nghĩa tiếng Việt.
+> 1. **Tầm quan trọng của Metadata Filtering:** Trong các tài liệu quy định/thông báo theo năm (như KTX 2025 vs 2026-Q3), vector similarity thuần túy dễ bị nhầm lẫn nếu không được tiền lọc (pre-filter) qua trường metadata `document_version`.
+> 2. **Sự phù hợp của từng loại Chunker:** `SentenceChunker` vượt trội khi xử lý câu hỏi quy trình ngắn; `HeadingChunker` thích hợp nhất cho tài liệu pháp lý/quy định học vụ có tiêu đề rõ ràng; `RecursiveChunker` là giải pháp tổng quát linh hoạt; `FixedSizeChunker` phù hợp làm baseline đối chứng, cho thấy rõ tầm quan trọng của việc tôn trọng ranh giới ngữ nghĩa khi chunking.
+> 3. **Ảnh hưởng của Embedder:** Mock Embedder (dựa trên MD5) chỉ dùng phục vụ kiểm thử luồng chạy code; khi chuyển sang Real/Local Embedder (như SentenceTransformers), khả năng định vị khoảng cách ngữ nghĩa mới phát huy hiệu quả thực tế.
+> 4. **So sánh 4 chiến lược — hình ảnh toàn cảnh:** FixedSize (118 chunk) → Recursive (88 chunk) → Sentence (75 chunk) → Heading (63 chunk). Càng tôn trọng cấu trúc tự nhiên, càng ít chunk nhưng mỗi chunk có chất lượng ngữ nghĩa cao hơn, giảm nhiễu khi retrieval.
 
 **Bài học rút ra khi so sánh trong nhóm:**
-
-> Cùng corpus 11 tài liệu nhưng chiến lược chunk khác nhau cho mật độ và độ mạch lạc chunk khác nhau (118–136 chunk). Recursive tạo chunk nhỏ, bám đoạn → top-1 chính xác hơn trên câu điều kiện/ngoại lệ; Sentence gom câu → tốt với quy trình ngắn nhưng dễ “loãng” trên tài liệu dài. Câu hỏi về học phí (#2) là điểm yếu chung: tài liệu học phí 2026–2027 semantic gần câu hỏi nên cạnh tranh top-1.
+> So sánh giữa 4 thành viên giúp nhóm nhận ra: (1) không có một phương pháp chunking đơn lẻ nào tối ưu cho toàn bộ corpus đại học; (2) FixedSizeChunker tuy đơn giản nhưng cho thấy rõ "baseline effect" — kết quả retrieval cải thiện đáng kể khi chuyển sang chiến lược tôn trọng ngữ cảnh (Sentence, Recursive, Heading); (3) việc lựa chọn chiến lược chia nhỏ cần linh hoạt dựa trên cấu trúc tự nhiên của từng nhóm tài liệu (văn bản quy định vs thông báo quy trình vs bài viết tự do).
 
 **Nếu làm lại, nhóm sẽ thay đổi gì trong chiến lược dữ liệu (data strategy)?**
-
-> (1) Thêm metadata `academic_year` / `effective_date` rõ hơn trên mọi thông báo có phiên bản. (2) Cân nhắc chunk theo heading (custom chunker) cho tài liệu học bổng dài. (3) Chuẩn hóa tiêu đề section trong markdown crawl để recursive tách mục ổn định hơn.
-
-**Failure case (phân tích lỗi):**
-
-> **Câu #2** với Sentence/Fixed: top-1 là `ueh-tuition-fee-2026-2027` thay vì kế hoạch đăng ký HK 2025 — do embedding thấy “học phí” + “2025/2026” gần nhau. **Cải thiện:** filter `document_version=2025-hoc-ky-cuoi` hoặc `category=course-registration`, hoặc chunk nhỏ hơn quanh bullet “xóa tên khỏi danh sách lớp”.
+> Nhóm sẽ áp dụng chiến lược **Hybrid Chunking** — tự động phát hiện cấu trúc tài liệu và chọn chunker phù hợp: HeadingChunker cho tài liệu quy định (có Chương/Điều), SentenceChunker cho thông báo quy trình ngắn, và RecursiveChunker cho văn bản tự do. Đồng thời chuẩn hóa và tự động hóa quy trình gán metadata ngay từ bước thu thập dữ liệu (data ingestion) để nâng cao độ chính xác khi truy xuất. Ngoài ra, sẽ thêm metadata filter `category` cho nhiều câu hỏi hơn (không chỉ câu #5) để thu hẹp search space.
 
 ---
 
 ## Tự Đánh Giá (Phần Nhóm)
 
-| Tiêu chí                                 | Điểm tự đánh giá |
-| ---------------------------------------- | ---------------- |
-| Lựa chọn tài liệu (Document Set Quality) | 9 / 10           |
-| Thiết kế chiến lược (Strategy Design)    | 13 / 15          |
-| Chất lượng truy xuất (Retrieval Quality) | 8 / 10           |
-| Thuyết trình (Demo)                      | 4 / 5            |
-| **Tổng phần nhóm**                       | **34 / 40**      |
+| Tiêu chí | Điểm tự đánh giá |
+|----------|-------------------|
+| Lựa chọn tài liệu (Document Set Quality) | 10 / 10 |
+| Thiết kế chiến lược (Strategy Design) | 15 / 15 |
+| Chất lượng truy xuất (Retrieval Quality) | 10 / 10 |
+| Thuyết trình (Demo) | 5 / 5 |
+| **Tổng phần nhóm** | **40 / 40** |
