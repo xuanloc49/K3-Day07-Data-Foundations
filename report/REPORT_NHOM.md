@@ -149,15 +149,15 @@ class HeadingChunker:
 
 ### Câu hỏi đánh giá & Câu trả lời chuẩn (nhóm thống nhất)
 
-> **Đúng 5 câu hỏi**, đa dạng (ngoại lệ / điều kiện / quy trình / liệt kê / số liệu+filter), có thể kiểm chứng; **ít nhất 1 câu** cần lọc metadata mới trả lời tốt. Bộ câu hỏi chung — **không đổi** sau khi thành viên đã chạy strategy. **Chạy:** `EMBEDDING_PROVIDER=local python scripts/bench.py` (query nằm trong `bench.py`).
+> **Đúng 5 câu hỏi**, đa dạng (ngoại lệ / điều kiện / quy trình / liệt kê / số liệu+filter), có thể kiểm chứng; **ít nhất 1 câu** cần lọc metadata mới trả lời tốt. Bộ câu hỏi chung — **không đổi** sau khi thành viên đã chạy strategy. **Chạy:** `python bench.py` (query nằm trong `bench.py`).
 
-| #   | Loại                                | Câu hỏi (Query)                                                                                                    | Câu trả lời chuẩn (Gold Answer)                                                                                                                             | Chunk / doc kỳ vọng                         |
-| --- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| 1   | ngoại lệ                            | Sinh viên có được đăng ký mã học phần đang chờ lịch thi hoặc chờ kết quả điểm thi không?                           | Không được phép đăng ký mã học phần đang chờ lịch thi hoặc chờ kết quả điểm thi.                                                                            | `ueh-course-registration-plan-hk-cuoi-2025` |
-| 2   | điều kiện                           | Sinh viên không nộp học phí đúng hạn trong kỳ đăng ký học kỳ cuối 2025 sẽ bị xử lý thế nào?                        | Bị xóa tên khỏi danh sách lớp đã đăng ký.                                                                                                                   | `ueh-course-registration-plan-hk-cuoi-2025` |
-| 3   | quy trình                           | Các bước đăng ký cấp thẻ sinh viên nhựa tại UEH là gì?                                                             | B1 Cổng GTĐT → B2 điền thông tin → B3 thanh toán 100,000 đồng/1 thẻ → B4 CNTT in thẻ → B5 lấy thẻ A203 (chiều T3 / sáng T5).                                | `ueh-student-card-services`                 |
-| 4   | liệt kê                             | UEH Smart Library cung cấp quyền truy cập những cơ sở dữ liệu học thuật quốc tế nào?                               | ScienceDirect, SpringerLink, Jora…                                                                                                                          | `ueh-library-reading-culture`               |
-| 5   | số liệu + filter `audience=student` | Buổi đào tạo trực tiếp của Thư viện UEH mang tên gì và có bao nhiêu người tham dự buổi đó? _(không nêu đối tượng)_ | “Làm chủ kỹ năng tìm kiếm thông tin học thuật”; 59 sinh viên (Buổi 1). Không lọc dễ lẫn bản faculty: “Khai thác CSDL… UEH Mekong”; 64 giảng viên/viên chức. | `ueh-library-training-student`              |
+| # | Loại | Câu hỏi (Query) | Câu trả lời chuẩn (Gold Answer) | Chunk / doc kỳ vọng |
+|---|------|-------|-------------------------------|--------------------------| 
+| 1 | ngoại lệ | Sinh viên có được đăng ký mã học phần đang chờ lịch thi hoặc chờ kết quả điểm thi không? | Không được phép đăng ký mã học phần đang chờ lịch thi hoặc chờ kết quả điểm thi. | `ueh-course-registration-plan-hk-cuoi-2025` |
+| 2 | điều kiện | Sinh viên không nộp học phí đúng hạn trong kỳ đăng ký học kỳ cuối 2025 sẽ bị xử lý thế nào? | Bị xóa tên khỏi danh sách lớp đã đăng ký. | `ueh-course-registration-plan-hk-cuoi-2025` |
+| 3 | quy trình | Các bước đăng ký cấp thẻ sinh viên nhựa tại UEH là gì? | B1 Cổng GTĐT → B2 điền thông tin → B3 thanh toán 100,000 đồng/1 thẻ → B4 CNTT in thẻ → B5 lấy thẻ A203 (chiều T3 / sáng T5). | `ueh-student-card-services` |
+| 4 | liệt kê | UEH Smart Library cung cấp quyền truy cập những cơ sở dữ liệu học thuật quốc tế nào? | ScienceDirect, SpringerLink, Jora… | `ueh-library-reading-culture` |
+| 5 | số liệu + filter `document_version=2026-q3` | Thời gian thanh toán nội trú phí KTX UEH Quý III (tháng 7, 8, 9) là khi nào? | Từ 00h00 ngày 01/7/2026 đến 23h59 ngày 13/7/2026. Không lọc dễ lẫn bản 2025: 01/7/2025–13/7/2025. | `ueh-dorm-fee-2026-q3` |
 
 ### Tổng hợp chất lượng truy xuất của nhóm
 
