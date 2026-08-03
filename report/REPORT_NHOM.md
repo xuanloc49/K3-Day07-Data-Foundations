@@ -84,14 +84,14 @@ Chạy `ChunkingStrategyComparator().compare()` trên 3 tài liệu đại diệ
 - **Loại chiến lược:** Sentence (`SentenceChunker`)
 - **Mô tả & lý do chọn cho chủ đề này:** Chọn chia theo câu (tối đa 3 câu/chunk) vì nhiều thông báo UEH viết theo câu điều kiện / hậu quả / quy trình từng bước — giữ trọn câu tránh cắt giữa “Sinh viên … sẽ bị …”. Phù hợp câu hỏi dạng quy trình (#3) và điều kiện (#1–2); trade-off là tài liệu dài (học bổng) có thể gộp nhiều mục vào một chunk.
 - **Tham số:** `SentenceChunker(max_sentences_per_chunk=3)` — chạy `python scripts/bench.py --chunker sentences`
-- **Kết quả nạp corpus:** 135 chunk (`EMBEDDING_PROVIDER=local`, embedder `paraphrase-multilingual-MiniLM-L12-v2`)
+- **Kết quả nạp corpus:** 75 chunk (`EMBEDDING_PROVIDER=local`, embedder `paraphrase-multilingual-MiniLM-L12-v2`)
 
 **Thành viên 2 — Ngô Tuấn Hưng** (`DAY07-2A202601409-NgoTuanHung`)
 
 - **Loại chiến lược:** Recursive (`RecursiveChunker`)
 - **Mô tả & lý do chọn:** Thông báo UEH thường có cấu trúc đoạn/bullet rõ; `recursive` ưu tiên tách theo `\n\n`, `\n`, `. ` nên giữ mục con nguyên vẹn, chunk nhỏ hơn và dễ khớp câu hỏi cụ thể (ngoại lệ, số liệu theo quý).
 - **Tham số:** `RecursiveChunker(chunk_size=500)` — chạy `python scripts/bench.py --chunker recursive`
-- **Kết quả nạp corpus:** 136 chunk (cùng embedder local)
+- **Kết quả nạp corpus:** 88 chunk (cùng embedder local)
 
 **Thành viên 3 — Trần Xuân Lộc** (`DAY07-2A202601671-TranXuanLoc`)
 
@@ -130,8 +130,8 @@ class HeadingChunker:
 | Thành viên | Chiến lược (Strategy) | Số chunk | Điểm truy xuất (top-3) | Điểm mạnh | Điểm yếu |
 |-----------|----------|------|----------------------|-----------|----------|
 | Vũ Đức Anh (TV1) | SentenceChunker (`max_sentences_per_chunk=3`) | 75 | 5/5 (real) / 0/5 (mock) | Giữ câu trọn vẹn; quy trình ngắn gom tốt; câu điều kiện–hậu quả không bị cắt | Tài liệu dài dễ gộp nhiều ý không liên quan; chunk dài không đều |
-| Trần Xuân Lộc (TV2) | HeadingChunker (`max_chunk_size=1500, include_parents=True`) | 63 | 2/5 (mock) / 5/5 kỳ vọng (real) | Chunk = 1 Điều/section hoàn chỉnh, có heading context; ít chunk nhất → ít nhiễu | Tài liệu không có heading thành 1 chunk lớn; chunk dài hơn trung bình |
-| Ngô Tuấn Hưng (TV3) | RecursiveChunker (`chunk_size=500`) | 88 | 4/5 (real) | Tự động hạ cấp phân tách linh hoạt; giữ được khối đoạn; phổ quát cho mọi loại tài liệu | Chunk nhỏ hơn, có thể ngắt ngữ cảnh giữa các đoạn dài; không nhận biết heading |
+| Ngô Tuấn Hưng (TV2) | RecursiveChunker (`chunk_size=500`) | 88 | 4/5 (real) | Tự động hạ cấp phân tách linh hoạt; giữ được khối đoạn; phổ quát cho mọi loại tài liệu | Chunk nhỏ hơn, có thể ngắt ngữ cảnh giữa các đoạn dài; không nhận biết heading |
+| Trần Xuân Lộc (TV3) | HeadingChunker (`max_chunk_size=1500, include_parents=True`) | 63 | 5/5 (real) / 2/5 (mock) | Chunk = 1 Điều/section hoàn chỉnh, có heading context; ít chunk nhất → ít nhiễu | Tài liệu không có heading thành 1 chunk lớn; chunk dài hơn trung bình |
 | Đào Ngọc Bích (TV4) | FixedSizeChunker (`chunk_size=500, overlap=50`) | 118 | 2/5 (mock) | Đơn giản, nhanh, dễ implement; overlap giảm mất thông tin tại biên; baseline tốt để so sánh | Không tôn trọng ranh giới ngữ nghĩa; dễ cắt giữa bảng/Điều; nhiều chunk nhất → nhiều nhiễu |
 
 **Chiến lược nào tốt nhất cho chủ đề này? Tại sao?**
