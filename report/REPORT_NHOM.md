@@ -152,7 +152,7 @@ class HeadingChunker:
 | 2   | điều kiện                           | Sinh viên không nộp học phí đúng hạn trong kỳ đăng ký học kỳ cuối 2025 sẽ bị xử lý thế nào?                        | Bị xóa tên khỏi danh sách lớp đã đăng ký.                                                                                                                   | `ueh-course-registration-plan-hk-cuoi-2025` |
 | 3   | quy trình                           | Các bước đăng ký cấp thẻ sinh viên nhựa tại UEH là gì?                                                             | B1 Cổng GTĐT → B2 điền thông tin → B3 thanh toán 100,000 đồng/1 thẻ → B4 CNTT in thẻ → B5 lấy thẻ A203 (chiều T3 / sáng T5).                                | `ueh-student-card-services`                 |
 | 4   | liệt kê                             | UEH Smart Library cung cấp quyền truy cập những cơ sở dữ liệu học thuật quốc tế nào?                               | ScienceDirect, SpringerLink, Jora…                                                                                                                          | `ueh-library-reading-culture`               |
-| 5   | số liệu + filter `audience=student` | Buổi đào tạo trực tiếp của Thư viện UEH mang tên gì và có bao nhiêu người tham dự buổi đó? _(không nêu đối tượng)_ | “Làm chủ kỹ năng tìm kiếm thông tin học thuật”; 59 sinh viên (Buổi 1). Không lọc dễ lẫn bản faculty: “Khai thác CSDL… UEH Mekong”; 64 giảng viên/viên chức. | `ueh-library-training-student`              |
+| 5   | số liệu + filter (audience & version) | Thời gian thanh toán nội trú phí KTX UEH Quý III (tháng 7, 8, 9) dành cho sinh viên là khi nào? | Từ 00h00 ngày 01/7/2026 đến 23h59 ngày 13/7/2026. | `ueh-dorm-fee-2026-q3` |
 
 ### Tổng hợp chất lượng truy xuất của nhóm
 
@@ -166,7 +166,7 @@ class HeadingChunker:
 | 2   | trễ học phí             | Recursive                       | Cả 3: **Có** (doc đúng ở top-2+) | Sentence & Fixed: top-1 lệch `ueh-tuition-fee-2026-2027` (cùng chủ đề học phí)                  |
 | 3   | quy trình thẻ nhựa      | Recursive                       | Cả 3: **Có**                     | Recursive score cao nhất (0.84); Fixed top-1 thiếu keyword B1–B5 trong preview                  |
 | 4   | CSDL quốc tế            | Recursive                       | Cả 3: **Có**                     | Top-1 đều là `ueh-library-reading-culture`, score ~0.86–0.89                                    |
-| 5   | KTX Quý III + filter    | Recursive / Fixed / Sentence    | Cả 3: **Có** (khi có filter)     | Bắt buộc `document_version=2026-q3`; không filter dễ trộn `ueh-dorm-fee-2025`                   |
+| 5   | KTX Quý III + filter    | Recursive / Fixed / Sentence    | Cả 3: **Có** (khi có filter)     | Bắt buộc `metadata_filter={"audience": "student", "document_version": "2026-q3"}` để loại bản 2025 và đảm bảo dành cho sinh viên |
 
 **Lọc bằng metadata có giúp ích không? Ở câu hỏi nào?**
 

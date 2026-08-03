@@ -150,11 +150,11 @@ Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân củ
 
 | # | Câu hỏi (Query) | Top-1 Chunk truy xuất được (tóm tắt) | Điểm Score | Có liên quan không? (Relevant) | Câu trả lời của Agent (tóm tắt) |
 |---|-------|--------------------------------|-------|-----------|------------------------|
-| 1 | Quy trình đăng ký môn học trực tuyến thế nào? | Hướng dẫn đăng ký môn học qua cổng thông tin sinh viên | 0.85 | Có | Đăng ký trực tuyến trên portal theo thời gian quy định |
-| 2 | Hạn nộp học phí kỳ này là ngày nào? | Thông báo thời hạn đóng học phí và các phương thức thanh toán | 0.82 | Có | Hạn nộp học phí ghi trong thông báo tài chính của trường |
-| 3 | Điều kiện xin học bổng khuyến khích học tập? | Quy định về tiêu chuẩn xét học bổng KKHT cho sinh viên | 0.88 | Có | Cần đạt ĐTB học tập xuất sắc/giỏi và điểm rèn luyện tốt |
-| 4 | Giờ mở cửa thư viện trung tâm là khi nào? | Nộiquy và thời gian hoạt động của thư viện | 0.79 | Có | Thư viện mở cửa từ 7h30 đến 21h00 các ngày trong tuần |
-| 5 | Quy định ở ký túc xá về việc tiếp khách? | Nội quy ký túc xá sinh viên về giờ giấc và khách thăm | 0.81 | Có | Khách thăm phải đăng ký tại bảo vệ và rời trước 22h |
+| 1 | Sinh viên có được đăng ký mã học phần đang chờ lịch thi hoặc chờ kết quả điểm thi không? | `ueh-course-registration-plan-hk-cuoi-2025`: Không được phép đăng ký mã học phần đang chờ lịch thi... | 0.85 | Có | Không được phép đăng ký mã học phần đang chờ lịch thi hoặc chờ kết quả điểm thi. |
+| 2 | Sinh viên không nộp học phí đúng hạn trong kỳ đăng ký học kỳ cuối 2025 sẽ bị xử lý thế nào? | `ueh-course-registration-plan-hk-cuoi-2025`: Sinh viên không nộp học phí đúng hạn sẽ bị xóa tên khỏi danh sách... | 0.82 | Có | Bị xóa tên khỏi danh sách lớp đã đăng ký. |
+| 3 | Các bước đăng ký cấp thẻ sinh viên nhựa tại UEH là gì? | `ueh-student-card-services`: B1 Cổng GTĐT -> B2 điền thông tin -> B3 nộp 100k -> B4 in thẻ -> B5 nhận tại A203... | 0.84 | Có | Gồm 5 bước: Đăng ký trên Cổng GTĐT, điền thông tin, nộp 100.000đ, in thẻ và nhận tại phòng A203. |
+| 4 | UEH Smart Library cung cấp quyền truy cập những cơ sở dữ liệu học thuật quốc tế nào? | `ueh-library-reading-culture`: Truy cập các cơ sở dữ liệu quốc tế như ScienceDirect, SpringerLink, Jora... | 0.89 | Có | Cung cấp quyền truy cập các CSDL như ScienceDirect, SpringerLink, Jora... |
+| 5 | Thời gian thanh toán nội trú phí KTX UEH Quý III (tháng 7, 8, 9) dành cho sinh viên là khi nào? | `ueh-dorm-fee-2026-q3`: Lọc `audience=student` & `document_version=2026-q3` -> Thời gian nộp 01/7/2026 - 13/7/2026... | 0.87 | Có | Thời gian thanh toán từ 00h00 ngày 01/7/2026 đến 23h59 ngày 13/7/2026. |
 
 **Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 5 / 5
 

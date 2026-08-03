@@ -135,11 +135,11 @@ BENCHMARK_QUERIES: tuple[BenchmarkQuery, ...] = (
     ),
     BenchmarkQuery(
         id=5,
-        kind="số liệu / filter document_version",
-        query="Thời gian thanh toán nội trú phí KTX UEH Quý III (tháng 7, 8, 9) là khi nào?",
+        kind="số liệu / filter audience & document_version",
+        query="Thời gian thanh toán nội trú phí KTX UEH Quý III (tháng 7, 8, 9) dành cho sinh viên là khi nào?",
         gold_answer="Từ 00h00 ngày 01/7/2026 đến 23h59 ngày 13/7/2026.",
         expected_doc_id="ueh-dorm-fee-2026-q3",
-        metadata_filter={"document_version": "2026-q3"},
+        metadata_filter={"audience": "student", "document_version": "2026-q3"},
         verify_keywords=("01/7/2026", "13/7/2026"),
     ),
 )
