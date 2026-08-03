@@ -1,7 +1,7 @@
 # Báo Cáo Cá Nhân — Lab 7: Embedding & Vector Store
 
 **Họ tên:** Vũ Đức Anh
-**Nhóm:** [Tên nhóm]
+**Nhóm:** DAY07 — UEH University Services
 **Ngày:** 03/08/2026
 
 > **Nộp 1 bản / sinh viên.** Phần nhóm (lựa chọn tài liệu, thiết kế chiến lược, bộ câu hỏi đánh giá, demo) nộp chung 1 bản trong `REPORT_NHOM.md`. Chi tiết thang điểm: `docs/SCORING.md`.
@@ -145,39 +145,39 @@ OK
 
 ## 4. Dự đoán độ tương tự (Similarity Predictions) — Cá nhân (5 điểm)
 
-> _Ghi chú:_ Dự đoán dựa trên trực giác ngữ nghĩa. Điểm thực tế chạy bằng `MockEmbedder` (hash-based, không phản ánh ngữ nghĩa tiếng Việt). Với `EMBEDDING_PROVIDER=local` kết quả sẽ khác và phù hợp dự đoán hơn.
+> _Ghi chú:_ Dự đoán dựa trên trực giác ngữ nghĩa. Điểm thực tế chạy bằng `LocalEmbedder` (`paraphrase-multilingual-MiniLM-L12-v2`, `EMBEDDING_PROVIDER=local`).
 
 | Cặp | Câu A                                                  | Câu B                                               | Dự đoán | Điểm thực tế | Đúng? |
 | --- | ------------------------------------------------------ | --------------------------------------------------- | ------- | ------------ | ----- |
-| 1   | Sinh viên đăng ký học phần trên cổng học vụ.           | Quy trình đăng ký môn học trực tuyến cho sinh viên. | cao     | -0.079       | Không |
-| 2   | Thư viện cho mượn sách và cung cấp không gian học tập. | Dịch vụ thư viện hỗ trợ mượn tài liệu.              | cao     | -0.036       | Không |
-| 3   | Sinh viên đăng ký học phần theo lịch học kỳ.           | Thời tiết hôm nay nắng đẹp.                         | thấp    | 0.118        | Có    |
-| 4   | Python là ngôn ngữ lập trình bậc cao.                  | Java cũng là ngôn ngữ lập trình phổ biến.           | cao     | -0.061       | Không |
-| 5   | Khi trùng lịch, sinh viên điều chỉnh lớp học phần.     | Nếu bị trùng lịch học, cần đổi lớp trước hạn.       | cao     | -0.112       | Không |
+| 1   | Sinh viên đăng ký học phần trên cổng học vụ.           | Quy trình đăng ký môn học trực tuyến cho sinh viên. | cao     | 0.557        | Có    |
+| 2   | Thư viện cho mượn sách và cung cấp không gian học tập. | Dịch vụ thư viện hỗ trợ mượn tài liệu.              | cao     | 0.814        | Có    |
+| 3   | Sinh viên đăng ký học phần theo lịch học kỳ.           | Thời tiết hôm nay nắng đẹp.                         | thấp    | 0.105        | Có    |
+| 4   | Python là ngôn ngữ lập trình bậc cao.                  | Java cũng là ngôn ngữ lập trình phổ biến.           | cao     | 0.350        | Không |
+| 5   | Khi trùng lịch, sinh viên điều chỉnh lớp học phần.     | Nếu bị trùng lịch học, cần đổi lớp trước hạn.       | cao     | 0.666        | Có    |
 
 **Kết quả nào bất ngờ nhất? Điều này nói gì về cách embeddings biểu diễn ý nghĩa?**
 
-> Cặp 3 (đăng ký học phần vs thời tiết) có điểm dương cao nhất (+0.118) dù dự đoán là thấp — điều này bất ngờ nhất. Nguyên nhân là MockEmbedder tạo vector từ hash MD5, không hiểu ngữ nghĩa; hai câu có thể trùng hash pattern ngẫu nhiên. Điều này cho thấy **chất lượng embedding phụ thuộc hoàn toàn vào mô hình** — mock chỉ phục vụ unit test, không dùng để đánh giá retrieval thực tế. Cần embedder đa ngôn ngữ (ví dụ `paraphrase-multilingual-MiniLM-L12-v2`) mới phản ánh đúng ý nghĩa văn bản.
+> Cặp 4 (Python vs Java) chỉ đạt 0.350 dù cùng chủ đề “ngôn ngữ lập trình” — thấp hơn dự đoán. Mô hình đa ngôn ngữ nhấn mạnh ngữ cảnh tiếng Việt/UEH hơn quan hệ ngữ nghĩa trừu tượng giữa hai tên ngôn ngữ tiếng Anh. So với MockEmbedder (hash ngẫu nhiên), local embedder phản ánh đúng hướng cao/thấp trên 4/5 cặp, cho thấy **chọn mô hình embedding phù hợp ngôn ngữ và miền dữ liệu** quan trọng hơn tinh chỉnh chunking thuần túy.
 
 ---
 
 ## 5. Kết quả truy xuất của tôi (Competition Results) — Cá nhân (10 điểm)
 
-Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân trong gói `src`. **Chiến lược chunking:** `RecursiveChunker(chunk_size=300)` trên `data/k3_university/`. **Embedder:** MockEmbedder (môi trường chưa cài `sentence-transformers`).
+Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân trong gói `src`. **Corpus:** `data/ueh_university/` (11 tài liệu UEH). **Chiến lược chunking:** `RecursiveChunker(chunk_size=500)`. **Embedder:** `paraphrase-multilingual-MiniLM-L12-v2` (`EMBEDDING_PROVIDER=local`). **Lệnh:** `EMBEDDING_PROVIDER=local python scripts/bench.py --chunker recursive --top-k 3`.
 
-| #   | Câu hỏi (Query)                                                                  | Top-1 Chunk truy xuất được (tóm tắt)                                                             | Điểm Score | Có liên quan không? (Relevant) | Câu trả lời của Agent (tóm tắt)                                                                 |
-| --- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ---------- | ------------------------------ | ----------------------------------------------------------------------------------------------- |
-| 1   | Sinh viên đăng ký học phần ở đâu và theo lịch nào?                               | Đăng ký trên cổng học vụ theo lịch từng học kỳ; kiểm tra học phần tiên quyết trước khi xác nhận. | 0.240      | Có                             | Sinh viên đăng ký học phần qua cổng học vụ theo lịch học kỳ, cần kiểm tra điều kiện tiên quyết. |
-| 2   | Khi gặp lỗi trùng lịch thì sinh viên cần làm gì?                                 | _(Top-1 là blockquote hướng dẫn metadata template — nhiễu)_                                      | 0.282      | Không                          | Agent không trả lời đúng vì chunk nhiễu được xếp hạng cao nhất.                                 |
-| 3   | Thư viện cung cấp những dịch vụ gì?                                              | Mượn tài liệu và không gian học tập cho SV/GV/NV; cần thẻ định danh khi mượn.                    | 0.160      | Có                             | Thư viện cung cấp mượn tài liệu và không gian học tập.                                          |
-| 4   | Cần mang gì khi sử dụng dịch vụ mượn tài liệu?                                   | _(Top-1 là blockquote template — nhiễu)_                                                         | 0.033      | Không                          | Agent không tìm được thông tin "mang thẻ định danh" ở top-1.                                    |
-| 5   | Quy định đăng ký học phần dành cho sinh viên là gì? _(filter: audience=student)_ | Khi trùng lịch, điều chỉnh lớp trước hạn; yêu cầu ngoại lệ qua kênh học vụ chính thức.           | 0.045      | Một phần                       | Trả lời được phần xử lý trùng lịch nhưng chưa cover toàn bộ quy trình đăng ký.                  |
+| #   | Câu hỏi (Query)                                                                                                    | Top-1 Chunk truy xuất được (tóm tắt)                                                                                  | Điểm Score | Có liên quan không? (Relevant) | Câu trả lời của Agent (tóm tắt)                                                              |
+| --- | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------------ | ------------------------------------------------------------------------------------------- |
+| 1   | Sinh viên có được đăng ký mã học phần đang chờ lịch thi hoặc chờ kết quả điểm thi không?                           | Không được phép đăng ký mã học phần đang chờ lịch thi hoặc chờ kết quả điểm thi.                                     | 0.767      | Có                             | Top-1 chứa đúng câu gold; agent demo LLM chưa sinh câu trả lời đầy đủ.                      |
+| 2   | Sinh viên không nộp học phí đúng hạn trong kỳ đăng ký học kỳ cuối 2025 sẽ bị xử lý thế nào?                        | Đúng doc `ueh-course-registration-plan-hk-cuoi-2025` nhưng chunk top-1 nói về đối tượng đăng ký, chưa có “xóa tên”.   | 0.802      | Một phần                       | Doc đúng ở top-1; thông tin “bị xóa tên khỏi danh sách lớp” nằm ở chunk khác trong top-3.   |
+| 3   | Các bước đăng ký cấp thẻ sinh viên nhựa tại UEH là gì?                                                             | Hướng dẫn cấp thẻ sinh viên nhựa — UEH chỉ cung cấp thẻ nhựa cho sinh viên ĐHCQ ngoại trú…                          | 0.795      | Có                             | Top-3 đều từ `ueh-student-card-services`; keywords B1–B5 có trong corpus.                   |
+| 4   | UEH Smart Library cung cấp quyền truy cập những cơ sở dữ liệu học thuật quốc tế nào?                               | ScienceDirect, SpringerLink, Jora… (kho tài liệu số UEH Smart Library).                                               | 0.885      | Có                             | Top-1 chứa đúng danh sách CSDL quốc tế.                                                      |
+| 5   | Thời gian thanh toán nội trú phí KTX UEH Quý III (tháng 7, 8, 9) là khi nào? _(filter: document_version=2026-q3)_ | Thông báo thu nội trú phí KTX Quý III/2026 — khung 01/7/2026–13/7/2026.                                               | 0.733      | Có                             | Filter loại bản 2025; top-1 luôn là `ueh-dorm-fee-2026-q3`.                                  |
 
-**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 3 / 5
+**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 5 / 5 (expected `doc_id` trong top-3 cho cả 5 câu; top-1 đúng doc: 5/5)
 
 **Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
 
-> Dữ liệu sạch quan trọng không kém thuật toán chunking — blockquote/metadata template trong body làm nhiễu retrieval. Nhóm khác loại bỏ phần hướng dẫn trước khi nạp và dùng `RecursiveChunker` theo heading (`##`) cho kết quả ổn định hơn. Lọc `audience=student` giúp thu hẹp phạm vi nhưng vẫn cần chunk chất lượng cao mới trả lời đúng.
+> Local embedder đa ngôn ngữ thay đổi hoàn toàn kết quả so với mock — cùng `RecursiveChunker`, corpus UEH đạt 5/5 top-3. Metadata filter (`document_version=2026-q3`) bắt buộc khi nhiều phiên bản cùng chủ đề KTX. Câu #2 cho thấy đúng doc chưa đủ: chunk phải bám đúng đoạn chứa keyword gold (“xóa tên”) mới trả lời chính xác.
 
 ---
 
@@ -188,6 +188,6 @@ Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân tron
 | Khởi động (Warm-up)                             | 5 / 5            |
 | Hướng tiếp cận của tôi (My Approach)            | 9 / 10           |
 | Hoàn thiện code (Core Implementation — tests)   | 30 / 30          |
-| Dự đoán độ tương tự (Similarity Predictions)    | 3 / 5            |
-| Kết quả truy xuất của tôi (Competition Results) | 6 / 10           |
-| **Tổng phần cá nhân**                           | **53 / 60**      |
+| Dự đoán độ tương tự (Similarity Predictions)    | 4 / 5            |
+| Kết quả truy xuất của tôi (Competition Results) | 9 / 10           |
+| **Tổng phần cá nhân**                           | **57 / 60**      |
