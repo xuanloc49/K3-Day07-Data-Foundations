@@ -129,9 +129,9 @@ class HeadingChunker:
 
 | Thành viên | Chiến lược (Strategy) | Số chunk | Điểm truy xuất (top-3) | Điểm mạnh | Điểm yếu |
 |-----------|----------|------|----------------------|-----------|----------|
-| Ngô Tuấn Hưng (TV1) | SentenceChunker (`max_sentences_per_chunk=3`) | 75 | 5/5 (real) / 0/5 (mock) | Giữ câu trọn vẹn; quy trình ngắn gom tốt; câu điều kiện–hậu quả không bị cắt | Tài liệu dài dễ gộp nhiều ý không liên quan; chunk dài không đều |
+| Vũ Đức Anh (TV1) | SentenceChunker (`max_sentences_per_chunk=3`) | 75 | 5/5 (real) / 0/5 (mock) | Giữ câu trọn vẹn; quy trình ngắn gom tốt; câu điều kiện–hậu quả không bị cắt | Tài liệu dài dễ gộp nhiều ý không liên quan; chunk dài không đều |
 | Trần Xuân Lộc (TV2) | HeadingChunker (`max_chunk_size=1500, include_parents=True`) | 63 | 2/5 (mock) / 5/5 kỳ vọng (real) | Chunk = 1 Điều/section hoàn chỉnh, có heading context; ít chunk nhất → ít nhiễu | Tài liệu không có heading thành 1 chunk lớn; chunk dài hơn trung bình |
-| Thành viên 3 (TV3) | RecursiveChunker (`chunk_size=500`) | 88 | 4/5 (real) | Tự động hạ cấp phân tách linh hoạt; giữ được khối đoạn; phổ quát cho mọi loại tài liệu | Chunk nhỏ hơn, có thể ngắt ngữ cảnh giữa các đoạn dài; không nhận biết heading |
+| Ngô Tuấn Hưng (TV3) | RecursiveChunker (`chunk_size=500`) | 88 | 4/5 (real) | Tự động hạ cấp phân tách linh hoạt; giữ được khối đoạn; phổ quát cho mọi loại tài liệu | Chunk nhỏ hơn, có thể ngắt ngữ cảnh giữa các đoạn dài; không nhận biết heading |
 | Đào Ngọc Bích (TV4) | FixedSizeChunker (`chunk_size=500, overlap=50`) | 118 | 2/5 (mock) | Đơn giản, nhanh, dễ implement; overlap giảm mất thông tin tại biên; baseline tốt để so sánh | Không tôn trọng ranh giới ngữ nghĩa; dễ cắt giữa bảng/Điều; nhiều chunk nhất → nhiều nhiễu |
 
 **Chiến lược nào tốt nhất cho chủ đề này? Tại sao?**
