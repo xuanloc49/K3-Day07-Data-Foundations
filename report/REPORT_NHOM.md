@@ -172,8 +172,6 @@ class HeadingChunker:
 | 5 | thời gian KTX + filter | SentenceChunker + Filter `document_version=2026-q3` | **Có** (Top-1, score 0.81) | Filter giúp loại trừ bản 2025, lấy chính xác mốc 01/7/2026 |
 
 **Lọc bằng metadata có giúp ích không? Ở câu hỏi nào?**
-
-**Lọc bằng metadata có giúp ích không? Ở câu hỏi nào?**
 > Metadata filtering đặc biệt hiệu quả ở câu hỏi #5: corpus chứa cả `ueh-dorm-fee-2025` và `ueh-dorm-fee-2026-q3` cùng đề cập đến phí KTX Quý III (tháng 7, 8, 9). Sử dụng filter `document_version=2026-q3` giúp hệ thống lọc chính xác tài liệu năm 2026 thay vì bị lẫn thông tin từ năm 2025.
 
 ---
