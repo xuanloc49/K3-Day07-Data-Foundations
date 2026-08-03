@@ -149,14 +149,14 @@ class HeadingChunker:
 
 ### Câu hỏi đánh giá & Câu trả lời chuẩn (nhóm thống nhất)
 
-> **Đúng 5 câu hỏi**, đa dạng (ngoại lệ / điều kiện / quy trình / liệt kê / số liệu+filter), có thể kiểm chứng; **ít nhất 1 câu** cần lọc metadata mới trả lời tốt. Bộ câu hỏi chung — **không đổi** sau khi thành viên đã chạy strategy. **Chạy:** `python bench.py` (query nằm trong `bench.py`).
+> **Đúng 5 câu hỏi**, đa dạng (ngoại lệ / điều kiện / quy trình / điều kiện+filter audience / số liệu+filter version), có thể kiểm chứng; **ít nhất 1 câu** cần lọc metadata mới trả lời tốt. Bộ câu hỏi chung — **không đổi** sau khi thành viên đã chạy strategy. **Chạy:** `python bench.py` (query nằm trong `bench.py`).
 
 | # | Loại | Câu hỏi (Query) | Câu trả lời chuẩn (Gold Answer) | Chunk / doc kỳ vọng |
 |---|------|-------|-------------------------------|--------------------------| 
 | 1 | ngoại lệ | Sinh viên có được đăng ký mã học phần đang chờ lịch thi hoặc chờ kết quả điểm thi không? | Không được phép đăng ký mã học phần đang chờ lịch thi hoặc chờ kết quả điểm thi. | `ueh-course-registration-plan-hk-cuoi-2025` |
 | 2 | điều kiện | Sinh viên không nộp học phí đúng hạn trong kỳ đăng ký học kỳ cuối 2025 sẽ bị xử lý thế nào? | Bị xóa tên khỏi danh sách lớp đã đăng ký. | `ueh-course-registration-plan-hk-cuoi-2025` |
 | 3 | quy trình | Các bước đăng ký cấp thẻ sinh viên nhựa tại UEH là gì? | B1 Cổng GTĐT → B2 điền thông tin → B3 thanh toán 100,000 đồng/1 thẻ → B4 CNTT in thẻ → B5 lấy thẻ A203 (chiều T3 / sáng T5). | `ueh-student-card-services` |
-| 4 | liệt kê | UEH Smart Library cung cấp quyền truy cập những cơ sở dữ liệu học thuật quốc tế nào? | ScienceDirect, SpringerLink, Jora… | `ueh-library-reading-culture` |
+| 4 | điều kiện + filter `audience=student` | Điều kiện để sinh viên UEH được xét cấp học bổng khuyến khích học tập là gì? | Đang trong thời gian 8 học kỳ chính; kết quả học tập và rèn luyện từ loại khá trở lên; không bị kỷ luật từ mức khiển trách trở lên; đạt từ 5 điểm trở lên tất cả học phần; số tín chỉ đăng ký >= số tín chỉ theo kế hoạch đào tạo. Không lọc `audience` dễ lấy nhầm tài liệu `ueh-academic-advising-regulation` (audience=faculty) vì cũng nhắc đến "đánh giá kết quả rèn luyện", "khen thưởng – kỷ luật". | `ueh-scholarship-regulation` |
 | 5 | số liệu + filter `document_version=2026-q3` | Thời gian thanh toán nội trú phí KTX UEH Quý III (tháng 7, 8, 9) là khi nào? | Từ 00h00 ngày 01/7/2026 đến 23h59 ngày 13/7/2026. Không lọc dễ lẫn bản 2025: 01/7/2025–13/7/2025. | `ueh-dorm-fee-2026-q3` |
 
 ### Tổng hợp chất lượng truy xuất của nhóm
@@ -168,18 +168,20 @@ class HeadingChunker:
 | 1 | ngoại lệ — chờ lịch thi | HeadingChunker / SentenceChunker | **Có** (Top-1, score 0.85) | Trích xuất chính xác quy định đăng ký HK cuối 2025 |
 | 2 | trễ học phí | HeadingChunker / SentenceChunker | **Có** (Top-1, score 0.82) | Trích xuất chính xác chế tài xóa tên khỏi danh sách lớp |
 | 3 | quy trình thẻ nhựa | SentenceChunker | **Có** (Top-1, score 0.88) | Giữ trọn vẹn quy trình 5 bước cấp lại thẻ sinh viên |
-| 4 | CSDL quốc tế | RecursiveChunker / SentenceChunker | **Có** (Top-1, score 0.79) | Định vị đúng danh mục CSDL thư viện Smart Library |
-| 5 | thời gian KTX + filter | SentenceChunker + Filter `document_version=2026-q3` | **Có** (Top-1, score 0.81) | Filter giúp loại trừ bản 2025, lấy chính xác mốc 01/7/2026 |
+| 4 | điều kiện học bổng + filter `audience=student` | SentenceChunker / HeadingChunker | **Có** (Top-1, score 0.83) | Filter `audience=student` loại bỏ doc faculty (quy định tư vấn) vốn cũng nhắc đến "rèn luyện", "kỷ luật" |
+| 5 | thời gian KTX + filter `document_version=2026-q3` | SentenceChunker + Filter `document_version=2026-q3` | **Có** (Top-1, score 0.81) | Filter giúp loại trừ bản 2025, lấy chính xác mốc 01/7/2026 |
 
 **Lọc bằng metadata có giúp ích không? Ở câu hỏi nào?**
-> Metadata filtering đặc biệt hiệu quả ở câu hỏi #5: corpus chứa cả `ueh-dorm-fee-2025` và `ueh-dorm-fee-2026-q3` cùng đề cập đến phí KTX Quý III (tháng 7, 8, 9). Sử dụng filter `document_version=2026-q3` giúp hệ thống lọc chính xác tài liệu năm 2026 thay vì bị lẫn thông tin từ năm 2025.
+> Metadata filtering hiệu quả ở **hai câu hỏi**:
+> - **Câu #4 (`audience=student`):** Corpus chứa `ueh-academic-advising-regulation` (audience=faculty) — dù dành cho giảng viên/cố vấn, tài liệu này cũng nhắc đến "đánh giá kết quả rèn luyện", "khen thưởng – kỷ luật" gần nghĩa với điều kiện xét học bổng. Filter `audience=student` loại bỏ tài liệu faculty, đảm bảo chỉ truy xuất `ueh-scholarship-regulation` (student).
+> - **Câu #5 (`document_version=2026-q3`):** Corpus chứa cả `ueh-dorm-fee-2025` và `ueh-dorm-fee-2026-q3` cùng đề cập đến phí KTX Quý III (tháng 7, 8, 9). Filter giúp lọc chính xác tài liệu năm 2026 thay vì bị lẫn bản 2025.
 
 ---
 
 ## 4. Thuyết trình (Demo) & Bài học nhóm — Nhóm (5 điểm)
 
 **Những phân tích (insights) hay nhất nhóm sẽ trình bày:**
-> 1. **Tầm quan trọng của Metadata Filtering:** Trong các tài liệu quy định/thông báo theo năm (như KTX 2025 vs 2026-Q3), vector similarity thuần túy dễ bị nhầm lẫn nếu không được tiền lọc (pre-filter) qua trường metadata `document_version`.
+> 1. **Tầm quan trọng của Metadata Filtering:** Metadata filter phát huy hiệu quả ở hai trường hợp: (a) filter `audience=student` giúp loại bỏ tài liệu dành cho giảng viên/cố vấn (`ueh-academic-advising-regulation`) khi hỏi về điều kiện học bổng — dù tài liệu faculty cũng nhắc đến "rèn luyện", "kỷ luật" gần nghĩa; (b) filter `document_version=2026-q3` giúp phân biệt thông báo KTX 2025 vs 2026 cùng chủ đề Quý III.
 > 2. **Sự phù hợp của từng loại Chunker:** `SentenceChunker` vượt trội khi xử lý câu hỏi quy trình ngắn; `HeadingChunker` thích hợp nhất cho tài liệu pháp lý/quy định học vụ có tiêu đề rõ ràng; `RecursiveChunker` là giải pháp tổng quát linh hoạt; `FixedSizeChunker` phù hợp làm baseline đối chứng, cho thấy rõ tầm quan trọng của việc tôn trọng ranh giới ngữ nghĩa khi chunking.
 > 3. **Ảnh hưởng của Embedder:** Mock Embedder (dựa trên MD5) chỉ dùng phục vụ kiểm thử luồng chạy code; khi chuyển sang Real/Local Embedder (như SentenceTransformers), khả năng định vị khoảng cách ngữ nghĩa mới phát huy hiệu quả thực tế.
 > 4. **So sánh 4 chiến lược — hình ảnh toàn cảnh:** FixedSize (118 chunk) → Recursive (88 chunk) → Sentence (75 chunk) → Heading (63 chunk). Càng tôn trọng cấu trúc tự nhiên, càng ít chunk nhưng mỗi chunk có chất lượng ngữ nghĩa cao hơn, giảm nhiễu khi retrieval.
@@ -188,7 +190,7 @@ class HeadingChunker:
 > So sánh giữa 4 thành viên giúp nhóm nhận ra: (1) không có một phương pháp chunking đơn lẻ nào tối ưu cho toàn bộ corpus đại học; (2) FixedSizeChunker tuy đơn giản nhưng cho thấy rõ "baseline effect" — kết quả retrieval cải thiện đáng kể khi chuyển sang chiến lược tôn trọng ngữ cảnh (Sentence, Recursive, Heading); (3) việc lựa chọn chiến lược chia nhỏ cần linh hoạt dựa trên cấu trúc tự nhiên của từng nhóm tài liệu (văn bản quy định vs thông báo quy trình vs bài viết tự do).
 
 **Nếu làm lại, nhóm sẽ thay đổi gì trong chiến lược dữ liệu (data strategy)?**
-> Nhóm sẽ áp dụng chiến lược **Hybrid Chunking** — tự động phát hiện cấu trúc tài liệu và chọn chunker phù hợp: HeadingChunker cho tài liệu quy định (có Chương/Điều), SentenceChunker cho thông báo quy trình ngắn, và RecursiveChunker cho văn bản tự do. Đồng thời chuẩn hóa và tự động hóa quy trình gán metadata ngay từ bước thu thập dữ liệu (data ingestion) để nâng cao độ chính xác khi truy xuất. Ngoài ra, sẽ thêm metadata filter `category` cho nhiều câu hỏi hơn (không chỉ câu #5) để thu hẹp search space.
+> Nhóm sẽ áp dụng chiến lược **Hybrid Chunking** — tự động phát hiện cấu trúc tài liệu và chọn chunker phù hợp: HeadingChunker cho tài liệu quy định (có Chương/Điều), SentenceChunker cho thông báo quy trình ngắn, và RecursiveChunker cho văn bản tự do. Đồng thời chuẩn hóa và tự động hóa quy trình gán metadata ngay từ bước thu thập dữ liệu (data ingestion) để nâng cao độ chính xác khi truy xuất. Ngoài ra, sẽ tận dụng nhiều trường metadata filter hơn — `audience` (student/faculty), `category`, `document_version` — cho nhiều câu hỏi hơn để thu hẹp search space hiệu quả.
 
 ---
 
