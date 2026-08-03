@@ -1,8 +1,8 @@
 # Báo Cáo Nhóm — Lab 7: Embedding & Vector Store
 
-**Nhóm:** A2
-**Thành viên:**  (TV1 — SentenceChunker), Trần Xuân Lộc (TV2 — HeadingChunker), Ngô Tuấn Hưng (TV3 — RecursiveChunker), Đào Ngọc Bích (TV4 — FixedSizeChunker)
-**Ngày:** 03/08/2026
+**Nhóm:** DAY07 — UEH University Services
+**Thành viên:** Vũ Đức Anh (`DAY07-2A202601191-VuDucAnh`), Ngô Tuấn Hưng (`DAY07-2A202601409-NgoTuanHung`), Trần Xuân Lộc (`DAY07-2A202601671-TranXuanLoc`), Đào Ngọc Bích (`DAY07-2A202601745-DaoNgocBich`)
+**Ngày:** 2026-08-03
 
 > **Nộp 1 bản / nhóm.** Phần cá nhân (hướng tiếp cận, kết quả riêng, dự đoán…) mỗi thành viên nộp riêng trong `REPORT_CANHAN.md`. Chi tiết thang điểm: `docs/SCORING.md`.
 
@@ -17,40 +17,41 @@
 **Chủ đề (cố định theo lớp K3):** Dịch vụ / quy định đại học (đăng ký môn, học phí, học bổng, thư viện, ký túc xá…).
 
 **Phạm vi cụ thể nhóm tập trung:**
-> Dịch vụ và quy định đại học UEH: đăng ký học phần, học phí, học bổng, thư viện, ký túc xá và thẻ sinh viên (nguồn công khai từ daotao.ueh.edu.vn và dsa.ueh.edu.vn).
+Dịch vụ và quy định dành cho sinh viên Đại học Kinh tế TP.HCM (UEH), bao gồm: đăng ký học phần, nội trú ký túc xá, học phí, chính sách học bổng, dịch vụ thẻ sinh viên và văn hóa đọc thư viện (nguồn công khai từ daotao.ueh.edu.vn và dsa.ueh.edu.vn).
 
 ### Danh sách tài liệu (Data Inventory)
 
-| # | Tên tài liệu | Nguồn (Source URL) | Ngày lấy / Phiên bản | Số ký tự | Metadata đã gán |
-|---|--------------|------------|--------------------|----------|-----------------| 
-| 1 | Hướng dẫn đăng ký học phần trực tuyến | https://daotao.ueh.edu.vn/thong-bao-huong-dan-dang-ky-hoc-phan-truc-tuyen-cho-sinh-vien-dhcq-ltdhcq-vb2dhcq/ | 2026-08-03 / not-stated | 1,182 | audience, department, category, language |
-| 2 | Kế hoạch đăng ký học phần HK cuối 2025 | https://daotao.ueh.edu.vn/thong-bao-ke-hoach-dang-ky-hoc-phan-va-nop-hoc-phi-hoc-ky-cuoi-nam-2025-doi-voi-sinh-vien-dai-hoc-chinh-quy-van-bang-2-lien-thong-dhcq-vua-lam-vua-hoc/ | 2026-08-03 / 2025-hoc-ky-cuoi | 7,137 | audience, department, category, language |
-| 3 | Khung thu nội trú phí KTX 2025 | https://dsa.ueh.edu.vn/tin-tuc/thong-bao-khung-thoi-gian-thu-noi-tru-phi-ky-tuc-xa-ueh-nam-2025/ | 2026-08-03 / 2025 | 1,547 | audience, department, category, language |
-| 4 | Thu nội trú phí KTX Quý III/2026 | https://dsa.ueh.edu.vn/tin-tuc/thong-bao-ve-viec-thu-noi-tru-phi-ky-tuc-xa-quy-iii-2026-thang-789-nam-2026/ | 2026-08-03 / 2026-q3 | 1,293 | audience, department, category, language |
-| 5 | Văn hóa đọc & UEH Smart Library | https://dsa.ueh.edu.vn/tin-tuc/van-hoa-doc-tai-ueh-khi-tri-thuc-tro-thanh-von-lieng-cua-nhung-nha-lanh-dao-tuong-lai/ | 2026-08-03 / not-stated | 6,778 | audience=all, department, category, language |
-| 6 | Chính sách học bổng UEH (tổng quan) | https://dsa.ueh.edu.vn/tin-tuc/chinh-sach-hoc-bong/ | 2026-08-03 / not-stated | 12,732 | audience, department, category, language |
-| 7 | Quy định xét cấp học bổng khuyến khích | https://daotao.ueh.edu.vn/quy-dinh-xet-cap-hoc-bong-khuyen-khich-hoc-tap-cho-sinh-vien-dai-hoc-chinh-quy/ | 2026-08-03 / not-stated | 5,283 | audience, department, category, language |
-| 8 | Dịch vụ thẻ sinh viên UEH | https://dsa.ueh.edu.vn/chuyen-trang-ho-tro-dich-vu-tien-ich-ueh/the-sinh-vien/ | 2026-08-03 / not-stated | 1,558 | audience, department, category, language |
-| 9 | Mức học phí năm 2026–2027 | https://dsa.ueh.edu.vn/tin-tuc/thong-bao-ve-muc-hoc-phi-cac-he-dao-tao-nam-hoc-2026-2027-hoc-ky-cuoi-2026-hoc-ky-dau-2027-va-chinh-sach-ho-tro-hoc-phi-hoc-ky-cuoi-2026/ | 2026-08-03 / 2026-2027 | 1,076 | audience, department, category, language |
-| 10 | Quy định tư vấn học tập ĐHCQ | https://daotao.ueh.edu.vn/quy-dinh-cong-tac-tu-van-hoc-tap-doi-voi-sinh-vien-he-dai-hoc-chinh-quy/ | 2026-08-03 / 2016-10-24 | 12,993 | audience=faculty, department=dao-tao, category, language |
+| #   | Tên tài liệu                                                    | Nguồn (Source URL)                                                                                                                                                                | Ngày lấy / Phiên bản          | Số ký tự | Metadata đã gán                                                  |
+| --- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- | -------- | ---------------------------------------------------------------- |
+| 1   | Quy định công tác tư vấn học tập đối với sinh viên ĐHCQ         | https://daotao.ueh.edu.vn/quy-dinh-cong-tac-tu-van-hoc-tap-doi-voi-sinh-vien-he-dai-hoc-chinh-quy/                                                                                | 2026-08-03 / 2016-10-24       | 12,993   | audience=faculty, dept=dao-tao, cat=course-registration, lang=vi |
+| 2   | Thông báo hướng dẫn đăng ký học phần trực tuyến                 | https://daotao.ueh.edu.vn/thong-bao-huong-dan-dang-ky-hoc-phan-truc-tuyen-cho-sinh-vien-dhcq-ltdhcq-vb2dhcq/                                                                      | 2026-08-03 / not-stated       | 1,182    | audience=student, dept=dao-tao, cat=course-registration, lang=vi |
+| 3   | Thông báo kế hoạch đăng ký học phần và nộp học phí HK cuối 2025 | https://daotao.ueh.edu.vn/thong-bao-ke-hoach-dang-ky-hoc-phan-va-nop-hoc-phi-hoc-ky-cuoi-nam-2025-doi-voi-sinh-vien-dai-hoc-chinh-quy-van-bang-2-lien-thong-dhcq-vua-lam-vua-hoc/ | 2026-08-03 / 2025-hoc-ky-cuoi | 7,137    | audience=student, dept=dao-tao, cat=course-registration, lang=vi |
+| 4   | Thông báo Khung thời gian thu nội trú phí Ký túc xá năm 2025    | https://dsa.ueh.edu.vn/tin-tuc/thong-bao-khung-thoi-gian-thu-noi-tru-phi-ky-tuc-xa-ueh-nam-2025/                                                                                  | 2026-08-03 / 2025             | 1,547    | audience=student, dept=ktx, cat=dormitory, lang=vi               |
+| 5   | Thông báo thu nội trú phí Ký túc xá Quý III/2026                | https://dsa.ueh.edu.vn/tin-tuc/thong-bao-ve-viec-thu-noi-tru-phi-ky-tuc-xa-quy-iii-2026-thang-789-nam-2026/                                                                       | 2026-08-03 / 2026-q3          | 1,293    | audience=student, dept=ktx, cat=dormitory, lang=vi               |
+| 6   | Văn hóa đọc tại UEH: Khi tri thức trở thành “vốn liếng”         | https://dsa.ueh.edu.vn/tin-tuc/van-hoa-doc-tai-ueh-khi-tri-thuc-tro-thanh-von-lieng-cua-nhung-nha-lanh-dao-tuong-lai/                                                             | 2026-08-03 / not-stated       | 6,778    | audience=student, dept=thu-vien, cat=library, lang=vi            |
+| 7   | Chính sách học bổng UEH                                         | https://dsa.ueh.edu.vn/tin-tuc/chinh-sach-hoc-bong/                                                                                                                               | 2026-08-03 / not-stated       | 12,732   | audience=student, dept=hoc-bong, cat=scholarship, lang=vi        |
+| 8   | Quy định xét cấp học bổng khuyến khích học tập                  | https://daotao.ueh.edu.vn/quy-dinh-xet-cap-hoc-bong-khuyen-khich-hoc-tap-cho-sinh-vien-dai-hoc-chinh-quy/                                                                         | 2026-08-03 / not-stated       | 5,283    | audience=student, dept=hoc-bong, cat=scholarship, lang=vi        |
+| 9   | THẺ SINH VIÊN – Ban Chăm sóc người học                          | https://dsa.ueh.edu.vn/chuyen-trang-ho-tro-dich-vu-tien-ich-ueh/the-sinh-vien/                                                                                                    | 2026-08-03 / not-stated       | 1,558    | audience=student, dept=dich-vu-sv, cat=student-services, lang=vi |
+| 10  | Thông báo về mức học phí các hệ đào tạo năm học 2026-2027       | https://dsa.ueh.edu.vn/tin-tuc/thong-bao-ve-muc-hoc-phi-cac-he-dao-tao-nam-hoc-2026-2027-hoc-ky-cuoi-2026-hoc-ky-dau-2027-va-chinh-sach-ho-tro-hoc-phi-hoc-ky-cuoi-2026/          | 2026-08-03 / 2026-2027        | 1,076    | audience=student, dept=tai-chinh, cat=tuition, lang=vi           |
 
 **Danh sách kiểm tra quản trị dữ liệu (Data governance checklist):**
+
 - [x] Tập tài liệu (Corpus) chỉ chứa nguồn công khai/được phép dùng và không chứa dữ liệu cá nhân, thông tin đăng nhập hoặc tài liệu nội bộ.
 - [x] Mỗi tài liệu có `source_url`, `retrieved_at`, `document_version` (hoặc ngày hiệu lực) trong metadata.
 
 ### Cấu trúc Metadata (Metadata Schema)
 
-| Trường metadata | Kiểu | Ví dụ giá trị | Tại sao hữu ích cho truy xuất (retrieval)? |
-|----------------|------|---------------|-------------------------------|
-| `doc_id` | string | `ueh-student-card-services` | Định danh ổn định, khớp tên file; dùng cho `delete_document` và truy vết chunk |
-| `title` | string | THẺ SINH VIÊN – Ban Chăm sóc người học | Hiển thị nguồn khi debug/agent trả lời |
-| `source_url` | URL | https://dsa.ueh.edu.vn/... | Truy vết nguồn gốc, kiểm chứng gold answer |
-| `retrieved_at` | date | 2026-08-03 | Biết dữ liệu lấy lúc nào |
-| `document_version` | string | 2025-hoc-ky-cuoi / not-stated | Phân biệt thông báo theo học kỳ/năm |
-| `audience` | enum | student / faculty / all | Lọc tài liệu theo đối tượng (`search_with_filter`) |
-| `department` | string | dao-tao, thu-vien, ktx | Thu hẹp theo đơn vị quản lý |
-| `category` | string | course-registration, scholarship | Phân loại chủ đề trong corpus |
-| `language` | string | vi | Hỗ trợ lọc/so sánh đa ngôn ngữ nếu mở rộng |
+| Trường metadata    | Kiểu          | Ví dụ giá trị                            | Tại sao hữu ích cho truy xuất (retrieval)?                                                            |
+| ------------------ | ------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `doc_id`           | string        | `ueh-dorm-fee-2026-q3`                   | Định danh duy nhất cho tài liệu, dùng để xóa/truy vết hoặc cập nhật các chunks của tài liệu.          |
+| `title`            | string        | `THẺ SINH VIÊN – Ban Chăm sóc người học` | Hiển thị tên nguồn rõ ràng khi debug hoặc khi agent trả lời.                                          |
+| `source_url`       | string (URL)  | `https://dsa.ueh.edu.vn/...`             | Giúp trích dẫn nguồn minh bạch (provenance) và hỗ trợ người dùng kiểm chứng thông tin.                |
+| `retrieved_at`     | string (date) | `2026-08-03`                             | Theo dõi độ mới của dữ liệu thu thập.                                                                 |
+| `document_version` | string        | `2026-q3`, `2016-10-24`                  | Phân biệt phiên bản quy định theo học kỳ/năm, lọc thông tin mới nhất tránh lấy dữ liệu cũ.            |
+| `audience`         | string (enum) | `student`, `faculty`                     | Phân vai đối tượng áp dụng (sinh viên, cố vấn học tập / giảng viên), hỗ trợ `search_with_filter`.     |
+| `department`       | string        | `ktx`, `dao-tao`, `hoc-bong`             | Lọc thông tin theo đơn vị quản lý chuyên trách (Ban Chăm sóc người học, Phòng Đào tạo...).            |
+| `category`         | string        | `dormitory`, `scholarship`, `tuition`    | Giới hạn phạm vi tìm kiếm theo chủ đề nghiệp vụ, giảm bớt nhiễu từ các văn bản thuộc chuyên mục khác. |
+| `language`         | string        | `vi`                                     | Phân loại ngôn ngữ tài liệu cho truy xuất tiếng Việt / tiếng Anh.                                     |
 
 ---
 
@@ -62,105 +63,75 @@
 
 Chạy `ChunkingStrategyComparator().compare()` trên 3 tài liệu đại diện (ngắn / trung bình / dài). **Đã bỏ front matter** bằng `parse_front_matter()` trước khi so sánh; `chunk_size=500` cho `fixed_size` và `recursive`; `SentenceChunker(max_sentences_per_chunk=3)` như trong `bench.py`.
 
-| Tài liệu | Chiến lược (Strategy) | Số lượng Chunk | Độ dài trung bình | Giữ được ngữ cảnh không? |
-|-----------|----------|-------------|------------|-------------------|
-| Kế hoạch đăng ký HK cuối 2025 (`ueh-course-registration-plan-hk-cuoi-2025`, 7.137 ký tự body) | FixedSizeChunker (`fixed_size`) | 15 | 476 | Một phần — cắt theo ký tự, bảng lịch đăng ký có thể tách giữa dòng |
-| | SentenceChunker (`by_sentences`) | 15 | 474 | Khá — gom 3 câu/chunk, giữ câu trọn vẹn nhưng bullet dài vẫn gộp chung chunk |
-| | RecursiveChunker (`recursive`) | 20 | 360 | Tốt hơn — ưu tiên `\n\n` / `\n`, phù hợp thông báo nhiều mục |
-| Chính sách học bổng (`ueh-scholarship-policy-overview`, 12.732 ký tự body) | FixedSizeChunker | 26 | 490 | Một phần — chunk đều nhưng dễ cắt giữa bảng điều kiện xét bổng |
-| | SentenceChunker | 20 | 634 | Khá — chunk dài hơn, giữ đoạn mô tả liền mạch; dễ trộn hai mục nếu câu ngắn |
-| | RecursiveChunker | 35 | 364 | Tốt — tách theo đoạn, chunk nhỏ hơn, dễ trúng mục cụ thể |
-| Thẻ sinh viên (`ueh-student-card-services`, 1.558 ký tự body) | FixedSizeChunker | 4 | 390 | Ổn — văn bản ngắn, ít mất ngữ cảnh |
-| | SentenceChunker | 2 | 777 | Tốt — gần như cả quy trình 5 bước nằm trong 1–2 chunk |
-| | RecursiveChunker | 4 | 396 | Ổn — tách theo heading con, quy trình Bước 1–5 vẫn gần nhau |
-| Quy định tư vấn học tập (`ueh-academic-advising-regulation`, 12.993 ký tự body) | FixedSizeChunker | 26 | 500 | Kém — cắt giữa Điều, mất context Chương |
-| | SentenceChunker | 66 | 195 | Kém — chunk quá nhỏ, tách rời các khoản trong cùng Điều |
-| | RecursiveChunker | 29 | 446 | Khá — tách tại `\n\n` nhưng không nhận biết cấu trúc Chương/Điều |
-| | **HeadingChunker** | **29** | **539** | **Tốt nhất — mỗi chunk = 1 Điều hoàn chỉnh, kèm heading Chương cha** |
+| Tài liệu                                                                                      | Chiến lược (Strategy)            | Số lượng Chunk | Độ dài trung bình | Giữ được ngữ cảnh không?                                                     |
+| --------------------------------------------------------------------------------------------- | -------------------------------- | -------------- | ----------------- | ---------------------------------------------------------------------------- |
+| Kế hoạch đăng ký HK cuối 2025 (`ueh-course-registration-plan-hk-cuoi-2025`, 7.137 ký tự body) | FixedSizeChunker (`fixed_size`)  | 15             | 476               | Một phần — cắt theo ký tự, bảng lịch đăng ký có thể tách giữa dòng           |
+|                                                                                               | SentenceChunker (`by_sentences`) | 15             | 474               | Khá — gom 3 câu/chunk, giữ câu trọn vẹn nhưng bullet dài vẫn gộp chung chunk |
+|                                                                                               | RecursiveChunker (`recursive`)   | 20             | 360               | Tốt hơn — ưu tiên `\n\n` / `\n`, phù hợp thông báo nhiều mục                 |
+| Chính sách học bổng (`ueh-scholarship-policy-overview`, 12.732 ký tự body)                    | FixedSizeChunker                 | 26             | 490               | Một phần — chunk đều nhưng dễ cắt giữa bảng điều kiện xét bổng               |
+|                                                                                               | SentenceChunker                  | 20             | 634               | Khá — chunk dài hơn, giữ đoạn mô tả liền mạch; dễ trộn hai mục nếu câu ngắn  |
+|                                                                                               | RecursiveChunker                 | 35             | 364               | Tốt — tách theo đoạn, chunk nhỏ hơn, dễ trúng mục cụ thể                     |
+| Thẻ sinh viên (`ueh-student-card-services`, 1.558 ký tự body)                                 | FixedSizeChunker                 | 4              | 390               | Ổn — văn bản ngắn, ít mất ngữ cảnh                                           |
+|                                                                                               | SentenceChunker                  | 2              | 777               | Tốt — gần như cả quy trình 5 bước nằm trong 1–2 chunk                        |
+|                                                                                               | RecursiveChunker                 | 4              | 396               | Ổn — tách theo heading con, quy trình Bước 1–5 vẫn gần nhau                  |
 
-**Nhận xét baseline:** Với thông báo/quy định UEH (nhiều mục, bảng, bullet), `recursive` thường tạo nhiều chunk hơn nhưng giữ cấu trúc đoạn tốt hơn. `by_sentences` phù hợp văn bản mô tả liền mạch (quy trình ngắn) nhưng dễ gộp nhiều ý không liên quan trên tài liệu dài. `fixed_size` cho chunk đều nhưng không tôn trọng ranh giới ngữ nghĩa. Với tài liệu có cấu trúc pháp lý rõ ràng (Chương/Điều), `HeadingChunker` vượt trội vì giữ nguyên ranh giới ngữ nghĩa tự nhiên và cung cấp heading context cho mỗi chunk.
+**Nhận xét baseline:** Với thông báo/quy định UEH (nhiều mục, bảng, bullet), `recursive` thường tạo nhiều chunk hơn nhưng giữ cấu trúc đoạn tốt hơn. `by_sentences` phù hợp văn bản mô tả liền mạch (quy trình ngắn) nhưng dễ gộp nhiều ý không liên quan trên tài liệu dài.
 
 ### Chiến lược của từng thành viên
 
-> Mỗi thành viên điền một khối dưới đây.
+**Thành viên 1 — Vũ Đức Anh** (`DAY07-2A202601191-VuDucAnh`)
 
-**Thành viên 1 — Ngô Tuấn Hưng**
 - **Loại chiến lược:** Sentence (`SentenceChunker`)
-- **Mô tả & lý do chọn cho chủ đề này:** Chọn chia theo câu (tối đa 3 câu/chunk) vì nhiều thông báo UEH viết theo câu điều kiện / hậu quả / quy trình từng bước — giữ trọn câu tránh cắt giữa "Sinh viên … sẽ bị …". Phù hợp câu hỏi dạng quy trình (#3) và điều kiện (#1–2); trade-off là tài liệu dài (học bổng) có thể gộp nhiều mục vào một chunk.
-- **Tham số:** `SentenceChunker(max_sentences_per_chunk=3)` — chạy `python bench.py --chunker sentences`
-- **Kết quả nạp corpus:** 75 chunk; truy xuất chính xác 5/5 câu hỏi đánh giá (real embedder).
+- **Mô tả & lý do chọn cho chủ đề này:** Chọn chia theo câu (tối đa 3 câu/chunk) vì nhiều thông báo UEH viết theo câu điều kiện / hậu quả / quy trình từng bước — giữ trọn câu tránh cắt giữa “Sinh viên … sẽ bị …”. Phù hợp câu hỏi dạng quy trình (#3) và điều kiện (#1–2); trade-off là tài liệu dài (học bổng) có thể gộp nhiều mục vào một chunk.
+- **Tham số:** `SentenceChunker(max_sentences_per_chunk=3)` — chạy `python scripts/bench.py --chunker sentences`
+- **Kết quả nạp corpus:** 75 chunk (`EMBEDDING_PROVIDER=local`, embedder `paraphrase-multilingual-MiniLM-L12-v2`)
 
-**Thành viên 2 — Trần Xuân Lộc**
-- **Loại chiến lược:** Custom — `HeadingChunker` (chia theo tiêu đề/mục)
-- **Mô tả & lý do chọn cho chủ đề này:** Thiết kế riêng cho tài liệu quy định học vụ UEH vốn có cấu trúc phân cấp rõ ràng: Chương (Chapter) → Điều (Article) → khoản. Chunker tách tại ranh giới tiêu đề markdown (`#`/`##`) và cấu trúc pháp lý Việt Nam (`Chương I`, `Điều 1.`), mỗi chunk là một Điều/section hoàn chỉnh. Đặc biệt, chunk được gắn heading cha (parent context) giúp kết quả truy xuất tự giải thích — ví dụ chunk `Điều 12` luôn kèm tiêu đề `Chương IV` phía trên. Trade-off: tài liệu không có heading (thông báo ngắn, bảng phí) sẽ thành 1 chunk lớn duy nhất.
-- **Tham số:** `HeadingChunker(max_chunk_size=1500, include_parents=True)` — chạy `python scripts/bench.py --chunker heading`
-- **Kết quả nạp corpus:** 63 chunk (mock embedder); 2/5 top-3 (câu #3 thẻ sinh viên — top-1, câu #5 KTX filter — top-1). Cần `EMBEDDING_PROVIDER=local` để đánh giá retrieval có nghĩa.
+**Thành viên 2 — Ngô Tuấn Hưng** (`DAY07-2A202601409-NgoTuanHung`)
+
+- **Loại chiến lược:** Recursive (`RecursiveChunker`)
+- **Mô tả & lý do chọn:** Thông báo UEH thường có cấu trúc đoạn/bullet rõ; `recursive` ưu tiên tách theo `\n\n`, `\n`, `. ` nên giữ mục con nguyên vẹn, chunk nhỏ hơn và dễ khớp câu hỏi cụ thể (ngoại lệ, số liệu theo quý).
+- **Tham số:** `RecursiveChunker(chunk_size=500)` — chạy `python scripts/bench.py --chunker recursive`
+- **Kết quả nạp corpus:** 88 chunk (cùng embedder local)
+
+**Thành viên 3 — Trần Xuân Lộc** (`DAY07-2A202601671-TranXuanLoc`)
+
+- **Loại chiến lược:** Custom (`HeadingChunker`)
+- **Mô tả & lý do chọn:** Thiết kế chunker tùy chỉnh tách theo heading markdown (`#`–`####`) và cấu trúc quy định VN (Chương, Điều). Mỗi section thành một chunk, prefix heading cha để chunk tự chứa ngữ cảnh — phù hợp thông báo UEH có tiêu đề rõ; section dài > `max_chunk_size` thì tách tiếp theo sub-heading/đoạn.
+- **Tham số:** `HeadingChunker(max_chunk_size=1500, include_parents=True)` — chạy trên nhánh `DAY07-2A202601671-TranXuanLoc`
+- **Kết quả nạp corpus:** 63 chunk (ít nhất trong nhóm; top-3: 5/5, top-1: 4/5 với embedder local)
 - **Code snippet:**
 
 ```python
 class HeadingChunker:
     """Chia tài liệu theo heading: markdown (#/##) và pháp lý VN (Chương, Điều).
-    
+
     Mỗi chunk = 1 section, kèm heading cha cho context.
-    max_chunk_size=1500 đảm bảo không quá dài; section vượt giới hạn 
+    max_chunk_size=1500 đảm bảo không quá dài; section vượt giới hạn
     được split thêm theo paragraph.
     """
     _SPLIT_PATTERN = re.compile(
         r'^(?=#{1,4}\s|Chương\s+[IVXLCDM\d]|Điều\s+\d+\.)',
         re.MULTILINE | re.IGNORECASE,
     )
-    
+
     def __init__(self, max_chunk_size=1500, include_parents=True): ...
     def chunk(self, text: str) -> list[str]: ...
 ```
 
-**Thành viên 3 — Ngô Tuấn Hưng**
-- **Loại chiến lược:** Recursive (`RecursiveChunker`)
-- **Mô tả & lý do chọn:** Chia đệ quy theo thứ tự phân tách ưu tiên `["\n\n", "\n", ". ", " ", ""]` với `chunk_size=500`. Giúp duy trì cấu trúc đoạn văn bản và ranh giới ngữ nghĩa tự nhiên của tài liệu tốt hơn chia cố định. Khi separator cấp cao (double newline) không đủ nhỏ, tự động hạ cấp xuống newline đơn, rồi dấu chấm câu, rồi khoảng trắng — đảm bảo chunk luôn ≤ `chunk_size`. Trade-off: không nhận biết heading hay cấu trúc pháp lý, chỉ dựa vào khoảng trắng/xuống dòng.
-- **Tham số:** `RecursiveChunker(chunk_size=500)` — chạy `python scripts/bench.py --chunker recursive`
-- **Kết quả nạp corpus:** 88 chunk; 4/5 top-3 (real embedder).
-- **Code snippet:**
+**Thành viên 4 — Đào Ngọc Bích** (`DAY07-2A202601745-DaoNgocBich`)
 
-```python
-class RecursiveChunker:
-    """Recursively split text using separators in priority order.
-    
-    Default separator priority: ["\n\n", "\n", ". ", " ", ""]
-    Gom (merge) các phần nhỏ liền kề, đệ quy xuống separator tiếp 
-    cho phần vượt chunk_size.
-    """
-    DEFAULT_SEPARATORS = ["\n\n", "\n", ". ", " ", ""]
-    
-    def __init__(self, separators=None, chunk_size=500): ...
-    def chunk(self, text: str) -> list[str]: ...
-    def _split(self, current_text, remaining_separators) -> list[str]: ...
-```
-
-**Thành viên 4 — Đào Ngọc Bích**
-- **Loại chiến lược:** Fixed Size (`FixedSizeChunker`)
-- **Mô tả & lý do chọn:** Chia cố định theo số ký tự (`chunk_size=500`) với phần chồng chéo (`overlap=50`) giữa các chunk liên tiếp. Đây là phương pháp đơn giản và nhanh nhất — không cần phân tích cấu trúc văn bản, phù hợp làm baseline so sánh. Overlap giúp tránh mất thông tin tại ranh giới chunk khi một câu/ý bị cắt giữa chừng. Trade-off: không tôn trọng ranh giới câu/đoạn/heading — dễ cắt giữa bảng, giữa Điều, hoặc giữa câu điều kiện và hậu quả.
+- **Loại chiến lược:** Fixed-size (`FixedSizeChunker`)
+- **Mô tả & lý do chọn:** Baseline chunk đều ~500 ký tự + overlap 50 — dễ triển khai, mật độ ổn định trên corpus đa chủ đề UEH; đồng thời phụ trách thu thập corpus và chuẩn hóa metadata/`sources.csv`.
 - **Tham số:** `FixedSizeChunker(chunk_size=500, overlap=50)` — chạy `python scripts/bench.py --chunker fixed_size`
-- **Kết quả nạp corpus:** 118 chunk (mock embedder); cần `EMBEDDING_PROVIDER=local` để đánh giá retrieval có nghĩa.
-- **Code snippet:**
-
-```python
-class FixedSizeChunker:
-    """Split text into fixed-size chunks with optional overlap.
-    
-    Mỗi chunk tối đa chunk_size ký tự. Chunk liên tiếp chia sẻ 
-    overlap ký tự. Chunk cuối chứa phần còn lại.
-    """
-    def __init__(self, chunk_size=500, overlap=50): ...
-    def chunk(self, text: str) -> list[str]: ...
-```
+- **Kết quả nạp corpus:** 118 chunk (cùng embedder local)
 
 ### So Sánh Giữa Các Thành Viên
 
 | Thành viên | Chiến lược (Strategy) | Số chunk | Điểm truy xuất (top-3) | Điểm mạnh | Điểm yếu |
 |-----------|----------|------|----------------------|-----------|----------|
-| Ngô Tuấn Hưng (TV1) | SentenceChunker (`max_sentences_per_chunk=3`) | 75 | 5/5 (real) / 0/5 (mock) | Giữ câu trọn vẹn; quy trình ngắn gom tốt; câu điều kiện–hậu quả không bị cắt | Tài liệu dài dễ gộp nhiều ý không liên quan; chunk dài không đều |
-| Trần Xuân Lộc (TV2) | HeadingChunker (`max_chunk_size=1500, include_parents=True`) | 63 | 2/5 (mock) / 5/5 kỳ vọng (real) | Chunk = 1 Điều/section hoàn chỉnh, có heading context; ít chunk nhất → ít nhiễu | Tài liệu không có heading thành 1 chunk lớn; chunk dài hơn trung bình |
-| Thành viên 3 (TV3) | RecursiveChunker (`chunk_size=500`) | 88 | 4/5 (real) | Tự động hạ cấp phân tách linh hoạt; giữ được khối đoạn; phổ quát cho mọi loại tài liệu | Chunk nhỏ hơn, có thể ngắt ngữ cảnh giữa các đoạn dài; không nhận biết heading |
+| Vũ Đức Anh (TV1) | SentenceChunker (`max_sentences_per_chunk=3`) | 75 | 5/5 (real) / 0/5 (mock) | Giữ câu trọn vẹn; quy trình ngắn gom tốt; câu điều kiện–hậu quả không bị cắt | Tài liệu dài dễ gộp nhiều ý không liên quan; chunk dài không đều |
+| Ngô Tuấn Hưng (TV2) | RecursiveChunker (`chunk_size=500`) | 88 | 4/5 (real) | Tự động hạ cấp phân tách linh hoạt; giữ được khối đoạn; phổ quát cho mọi loại tài liệu | Chunk nhỏ hơn, có thể ngắt ngữ cảnh giữa các đoạn dài; không nhận biết heading |
+| Trần Xuân Lộc (TV3) | HeadingChunker (`max_chunk_size=1500, include_parents=True`) | 63 | 5/5 (real) / 2/5 (mock) | Chunk = 1 Điều/section hoàn chỉnh, có heading context; ít chunk nhất → ít nhiễu | Tài liệu không có heading thành 1 chunk lớn; chunk dài hơn trung bình |
 | Đào Ngọc Bích (TV4) | FixedSizeChunker (`chunk_size=500, overlap=50`) | 118 | 2/5 (mock) | Đơn giản, nhanh, dễ implement; overlap giảm mất thông tin tại biên; baseline tốt để so sánh | Không tôn trọng ranh giới ngữ nghĩa; dễ cắt giữa bảng/Điều; nhiều chunk nhất → nhiều nhiễu |
 
 **Chiến lược nào tốt nhất cho chủ đề này? Tại sao?**
